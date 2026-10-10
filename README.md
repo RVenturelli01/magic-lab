@@ -9,6 +9,10 @@ dashboard on the other**. Give the agent your questions, instructions, and ideas
 Use the dashboard to visualize results, compare experiments, and understand
 how your algorithms are implemented.
 
+
+https://github.com/user-attachments/assets/d28f213b-b0db-402e-bd39-d7fabd0a7037
+
+
 Want to change anything? **JUST ASK your coding agent.** A different analysis,
 a clearer explanation, a new view, a feature, or a different style: describe
 what you need, then explore it in the dashboard.
