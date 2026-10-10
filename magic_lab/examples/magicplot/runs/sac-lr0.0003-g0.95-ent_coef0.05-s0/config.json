@@ -1,0 +1,34 @@
+{
+  "id": "sac-lr0.0003-g0.95-ent_coef0.05-s0",
+  "name": "sac-lr0.0003-g0.95-ent_coef0.05",
+  "algorithm": "SAC",
+  "environment": "Reacher-v5",
+  "seed": 0,
+  "status": "completed",
+  "config": {
+    "learning_rate": 0.0003,
+    "gamma": 0.95,
+    "ent_coef": 0.05,
+    "batch_size": 256,
+    "buffer_size": 100000,
+    "learning_starts": 1000,
+    "tau": 0.005,
+    "budget": 100000,
+    "log_every": 2500,
+    "data_source": "synthetic",
+    "generator_version": 1,
+    "environment_executed": false,
+    "reward_normalization": false,
+    "observation_normalization": false,
+    "wrappers": [],
+    "max_episode_steps": 50,
+    "evaluation_protocol": "synthetic observations; no evaluation episodes executed",
+    "checkpoint_selection": "none; no policy checkpoints",
+    "policy_architecture": [64, 64]
+  },
+  "code": {
+    "commit": "unknown-unversioned",
+    "dirty": true,
+    "sourceHash": "9aae8369736e56727595f59aa17f6c3892c4a14a3de30d5473f247f9921928a8"
+  }
+}

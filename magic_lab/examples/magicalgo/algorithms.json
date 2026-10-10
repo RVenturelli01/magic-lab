@@ -1,0 +1,1151 @@
+{
+  "version": 2,
+  "name": "PPO and DQN · modular references",
+  "hypothetical": true,
+  "root": "ppo",
+  "pendingAlgorithms": [
+    {
+      "id": "sac",
+      "title": "SAC"
+    },
+    {
+      "id": "td3",
+      "title": "TD3"
+    }
+  ],
+  "algorithms": [
+    {
+      "id": "ppo",
+      "number": 1,
+      "title": "PPO",
+      "input": [
+        {
+          "math": "\\theta_0"
+        },
+        {
+          "text": ", "
+        },
+        {
+          "math": "w_0"
+        },
+        {
+          "text": ", "
+        },
+        {
+          "math": "K"
+        },
+        {
+          "text": ", "
+        },
+        {
+          "math": "\\widetilde K"
+        },
+        {
+          "text": ", "
+        },
+        {
+          "math": "M"
+        },
+        {
+          "text": ", "
+        },
+        {
+          "math": "\\{\\mathcal E_e\\}_{e=1}^{N_e}"
+        },
+        {
+          "text": ", "
+        },
+        {
+          "math": "T"
+        },
+        {
+          "text": ", "
+        },
+        {
+          "math": "\\gamma"
+        },
+        {
+          "text": ", "
+        },
+        {
+          "math": "\\lambda"
+        },
+        {
+          "text": ", "
+        },
+        {
+          "math": "\\epsilon"
+        },
+        {
+          "text": ", "
+        },
+        {
+          "math": "c_1"
+        },
+        {
+          "text": ", "
+        },
+        {
+          "math": "c_2"
+        },
+        {
+          "text": ", "
+        },
+        {
+          "math": "\\alpha"
+        }
+      ],
+      "output": [
+        {
+          "math": "\\pi_{\\theta_K}"
+        }
+      ],
+      "body": [
+        {
+          "kind": "line",
+          "content": [
+            {
+              "math": "\\theta\\leftarrow\\theta_0,\\quad w\\leftarrow w_0"
+            }
+          ]
+        },
+        {
+          "kind": "block",
+          "header": [
+            {
+              "keyword": "for "
+            },
+            {
+              "math": "k=1,\\ldots,K"
+            },
+            {
+              "keyword": " do"
+            }
+          ],
+          "body": [
+            {
+              "kind": "comment",
+              "text": "Data Collection"
+            },
+            {
+              "kind": "line",
+              "content": [
+                {
+                  "math": "\\mathcal D_k\\leftarrow"
+                },
+                {
+                  "call": "collect"
+                },
+                {
+                  "math": "\\left(\\pi_\\theta,V_w,\\{\\mathcal E_e\\}_{e=1}^{N_e},T,\\gamma,\\lambda\\right)"
+                }
+              ]
+            },
+            {
+              "kind": "comment",
+              "text": "Multi-Epoch Optimization"
+            },
+            {
+              "kind": "line",
+              "content": [
+                {
+                  "math": "(\\theta,w)\\leftarrow"
+                },
+                {
+                  "call": "optimize"
+                },
+                {
+                  "math": "\\left(\\theta,w,\\mathcal D_k,\\widetilde K,M,\\epsilon,c_1,c_2,\\alpha\\right)"
+                }
+              ],
+              "note": "Reuse the same rollout for multiple optimization epochs; collect fresh data in the next training iteration."
+            },
+            {
+              "kind": "line",
+              "content": [
+                {
+                  "math": "\\theta_k\\leftarrow\\theta"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "notes": []
+    },
+    {
+      "id": "collect",
+      "number": 2,
+      "title": "On-Policy Data Collection",
+      "input": [
+        {
+          "math": "\\pi_\\theta"
+        },
+        {
+          "text": ", "
+        },
+        {
+          "math": "V_w"
+        },
+        {
+          "text": ", "
+        },
+        {
+          "math": "\\{\\mathcal E_e\\}_{e=1}^{N_e}"
+        },
+        {
+          "text": ", "
+        },
+        {
+          "math": "T"
+        },
+        {
+          "text": ", "
+        },
+        {
+          "math": "\\gamma"
+        },
+        {
+          "text": ", "
+        },
+        {
+          "math": "\\lambda"
+        }
+      ],
+      "output": [
+        {
+          "math": "\\mathcal D"
+        }
+      ],
+      "body": [
+        {
+          "kind": "line",
+          "content": [
+            {
+              "math": "\\mathcal D\\leftarrow\\varnothing"
+            }
+          ]
+        },
+        {
+          "kind": "block",
+          "header": [
+            {
+              "keyword": "for "
+            },
+            {
+              "math": "e=1,\\ldots,N_e"
+            },
+            {
+              "keyword": " do"
+            }
+          ],
+          "body": [
+            {
+              "kind": "line",
+              "content": [
+                {
+                  "math": "\\mathcal D_e\\leftarrow\\varnothing,\\quad s\\leftarrow\\operatorname{Reset}(\\mathcal E_e)"
+                }
+              ]
+            },
+            {
+              "kind": "comment",
+              "text": "Interaction"
+            },
+            {
+              "kind": "block",
+              "header": [
+                {
+                  "keyword": "for "
+                },
+                {
+                  "math": "t=1,\\ldots,T"
+                },
+                {
+                  "keyword": " do"
+                }
+              ],
+              "body": [
+                {
+                  "kind": "line",
+                  "content": [
+                    {
+                      "math": "s_t\\leftarrow s,\\quad a_t\\sim\\pi_\\theta(\\cdot\\mid s_t)"
+                    }
+                  ]
+                },
+                {
+                  "kind": "line",
+                  "content": [
+                    {
+                      "math": "(r_t,s'_t,d_t^{\\mathrm{term}},d_t^{\\mathrm{trunc}})\\leftarrow\\operatorname{Step}(\\mathcal E_e,a_t)"
+                    }
+                  ]
+                },
+                {
+                  "kind": "line",
+                  "content": [
+                    {
+                      "math": "b_t\\leftarrow1-d_t^{\\mathrm{term}},\\quad c_t\\leftarrow1-\\max(d_t^{\\mathrm{term}},d_t^{\\mathrm{trunc}})"
+                    }
+                  ],
+                  "note": "A true terminal state disables bootstrap. A time-limit truncation preserves bootstrap but stops the GAE trace."
+                },
+                {
+                  "kind": "line",
+                  "content": [
+                    {
+                      "math": "v_t\\leftarrow V_w(s_t),\\quad v'_t\\leftarrow V_w(s'_t),\\quad\\rho_t\\leftarrow\\log\\pi_\\theta(a_t\\mid s_t)"
+                    }
+                  ]
+                },
+                {
+                  "kind": "line",
+                  "content": [
+                    {
+                      "math": "\\mathcal D_e\\leftarrow\\mathcal D_e\\mathbin{\\|}(s_t,a_t,r_t,v_t,v'_t,\\rho_t,b_t,c_t)"
+                    }
+                  ]
+                },
+                {
+                  "kind": "line",
+                  "content": [
+                    {
+                      "math": "s\\leftarrow s'_t"
+                    }
+                  ]
+                },
+                {
+                  "kind": "block",
+                  "header": [
+                    {
+                      "keyword": "if "
+                    },
+                    {
+                      "math": "c_t=0"
+                    },
+                    {
+                      "keyword": " then"
+                    }
+                  ],
+                  "body": [
+                    {
+                      "kind": "line",
+                      "content": [
+                        {
+                          "math": "s\\leftarrow\\operatorname{Reset}(\\mathcal E_e)"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "kind": "comment",
+              "text": "Advantage Estimation"
+            },
+            {
+              "kind": "line",
+              "content": [
+                {
+                  "math": "(\\widehat A,\\widehat R)\\leftarrow"
+                },
+                {
+                  "call": "gae"
+                },
+                {
+                  "math": "(\\mathcal D_e,\\gamma,\\lambda)"
+                }
+              ]
+            },
+            {
+              "kind": "line",
+              "content": [
+                {
+                  "math": "\\mathcal D\\leftarrow\\mathcal D\\mathbin{\\|}\\left\\{(s_t,a_t,\\rho_t,\\widehat A_t,\\widehat R_t)\\right\\}_{t=1}^{T}"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "notes": []
+    },
+    {
+      "id": "optimize",
+      "number": 3,
+      "title": "PPO Optimization",
+      "input": [
+        {
+          "math": "\\theta"
+        },
+        {
+          "text": ", "
+        },
+        {
+          "math": "w"
+        },
+        {
+          "text": ", "
+        },
+        {
+          "math": "\\mathcal D"
+        },
+        {
+          "text": ", "
+        },
+        {
+          "math": "\\widetilde K"
+        },
+        {
+          "text": ", "
+        },
+        {
+          "math": "M"
+        },
+        {
+          "text": ", "
+        },
+        {
+          "math": "\\epsilon"
+        },
+        {
+          "text": ", "
+        },
+        {
+          "math": "c_1"
+        },
+        {
+          "text": ", "
+        },
+        {
+          "math": "c_2"
+        },
+        {
+          "text": ", "
+        },
+        {
+          "math": "\\alpha"
+        }
+      ],
+      "output": [
+        {
+          "math": "(\\theta,w)"
+        }
+      ],
+      "body": [
+        {
+          "kind": "block",
+          "header": [
+            {
+              "keyword": "for "
+            },
+            {
+              "math": "j=1,\\ldots,\\widetilde K"
+            },
+            {
+              "keyword": " do"
+            }
+          ],
+          "body": [
+            {
+              "kind": "line",
+              "content": [
+                {
+                  "math": "\\widetilde{\\mathcal D}\\leftarrow\\operatorname{Partition}\\!\\left(\\operatorname{Permute}(\\mathcal D),M\\right)"
+                }
+              ]
+            },
+            {
+              "kind": "block",
+              "header": [
+                {
+                  "keyword": "for "
+                },
+                {
+                  "math": "\\mathcal B\\in\\widetilde{\\mathcal D}"
+                },
+                {
+                  "keyword": " do"
+                }
+              ],
+              "body": [
+                {
+                  "kind": "comment",
+                  "text": "Clipped Surrogate"
+                },
+                {
+                  "kind": "equation",
+                  "math": "q_i(\\theta)=\\exp\\!\\left(\\log\\pi_\\theta(a_i\\mid s_i)-\\rho_i\\right)"
+                },
+                {
+                  "kind": "equation",
+                  "math": "L_i^{\\mathrm{clip}}(\\theta)=\\min\\!\\left\\{q_i(\\theta)\\widehat A_i,\\ \\operatorname{clip}\\!\\left(q_i(\\theta),1-\\epsilon,1+\\epsilon\\right)\\widehat A_i\\right\\}",
+                  "note": "Clipping limits the surrogate's incentive for large probability-ratio changes; it is not a hard KL constraint."
+                },
+                {
+                  "kind": "comment",
+                  "text": "Value Loss"
+                },
+                {
+                  "kind": "equation",
+                  "math": "L_i^{\\mathrm{vf}}(w)=\\frac12\\left(V_w(s_i)-\\widehat R_i\\right)^2"
+                },
+                {
+                  "kind": "comment",
+                  "text": "Joint Objective"
+                },
+                {
+                  "kind": "equation",
+                  "math": "\\widehat L(\\theta,w)=\\frac1{|\\mathcal B|}\\sum_{i\\in\\mathcal B}\\left[L_i^{\\mathrm{clip}}(\\theta)-c_1L_i^{\\mathrm{vf}}(w)+c_2H\\!\\left(\\pi_\\theta(\\cdot\\mid s_i)\\right)\\right]"
+                },
+                {
+                  "kind": "comment",
+                  "text": "Gradient Ascent"
+                },
+                {
+                  "kind": "equation",
+                  "math": "(\\theta,w)\\leftarrow(\\theta,w)+\\alpha\\left(\\nabla_\\theta\\widehat L(\\theta,w),\\,\\nabla_w\\widehat L(\\theta,w)\\right)"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "notes": []
+    },
+    {
+      "id": "gae",
+      "number": 4,
+      "title": "Generalized Advantage Estimation",
+      "input": [
+        {
+          "math": "\\mathcal D_e=\\{(s_t,a_t,r_t,v_t,v'_t,\\rho_t,b_t,c_t)\\}_{t=1}^{T}"
+        },
+        {
+          "text": ", "
+        },
+        {
+          "math": "\\gamma"
+        },
+        {
+          "text": ", "
+        },
+        {
+          "math": "\\lambda"
+        }
+      ],
+      "output": [
+        {
+          "math": "\\{(\\widehat A_t,\\widehat R_t)\\}_{t=1}^{T}"
+        }
+      ],
+      "body": [
+        {
+          "kind": "line",
+          "content": [
+            {
+              "math": "\\widehat A_{T+1}\\leftarrow0"
+            }
+          ],
+          "note": "The residual trace beyond the rollout is zero. Bootstrap from the final next observation is already included in the TD residual."
+        },
+        {
+          "kind": "block",
+          "header": [
+            {
+              "keyword": "for "
+            },
+            {
+              "math": "t=T,T-1,\\ldots,1"
+            },
+            {
+              "keyword": " do"
+            }
+          ],
+          "body": [
+            {
+              "kind": "line",
+              "content": [
+                {
+                  "math": "\\delta_t\\leftarrow r_t+\\gamma b_t v'_t-v_t"
+                }
+              ]
+            },
+            {
+              "kind": "line",
+              "content": [
+                {
+                  "math": "\\widehat A_t\\leftarrow\\delta_t+\\gamma\\lambda c_t\\widehat A_{t+1}"
+                }
+              ]
+            },
+            {
+              "kind": "line",
+              "content": [
+                {
+                  "math": "\\widehat R_t\\leftarrow\\widehat A_t+v_t"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "notes": []
+    },
+    {
+      "id": "dqn",
+      "number": 5,
+      "title": "DQN",
+      "input": [
+        {
+          "math": "\\theta_0,\\mathcal E,\\mathcal A,K,N,M,C,\\gamma,\\varepsilon,\\alpha"
+        }
+      ],
+      "output": [
+        {
+          "math": "Q_\\theta"
+        }
+      ],
+      "notes": [],
+      "body": [
+        {
+          "kind": "line",
+          "content": [
+            {
+              "math": "\\theta\\leftarrow\\theta_0,\\quad\\theta^-\\leftarrow\\theta_0,\\quad\\mathcal R\\leftarrow\\varnothing"
+            }
+          ]
+        },
+        {
+          "kind": "line",
+          "content": [
+            {
+              "math": "s\\leftarrow\\operatorname{Reset}(\\mathcal E)"
+            }
+          ]
+        },
+        {
+          "kind": "block",
+          "header": [
+            {
+              "keyword": "for "
+            },
+            {
+              "math": "k=1,\\ldots,K"
+            },
+            {
+              "keyword": " do"
+            }
+          ],
+          "body": [
+            {
+              "kind": "line",
+              "content": [
+                {
+                  "math": "(s,\\mathcal R)\\leftarrow"
+                },
+                {
+                  "call": "dqn-interaction"
+                },
+                {
+                  "math": "(\\theta,\\mathcal E,\\mathcal A,s,\\mathcal R,N,\\varepsilon)"
+                }
+              ]
+            },
+            {
+              "kind": "block",
+              "header": [
+                {
+                  "keyword": "if "
+                },
+                {
+                  "math": "|\\mathcal R|\\ge M"
+                },
+                {
+                  "keyword": " then"
+                }
+              ],
+              "body": [
+                {
+                  "kind": "line",
+                  "content": [
+                    {
+                      "math": "\\theta\\leftarrow"
+                    },
+                    {
+                      "call": "dqn-update"
+                    },
+                    {
+                      "math": "(\\theta,\\theta^-,\\mathcal R,\\mathcal A,M,\\gamma,\\alpha)"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "kind": "block",
+              "header": [
+                {
+                  "keyword": "if "
+                },
+                {
+                  "math": "k\\bmod C=0"
+                },
+                {
+                  "keyword": " then"
+                }
+              ],
+              "body": [
+                {
+                  "kind": "line",
+                  "content": [
+                    {
+                      "math": "\\theta^-\\leftarrow\\theta"
+                    }
+                  ],
+                  "note": "Copy the online weights into the target network every C environment steps; hold target weights fixed between copies."
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "dqn-interaction",
+      "number": 6,
+      "title": "DQN Interaction",
+      "input": [
+        {
+          "math": "\\theta,\\mathcal E,\\mathcal A,s,\\mathcal R,N,\\varepsilon"
+        }
+      ],
+      "output": [
+        {
+          "math": "(s,\\mathcal R)"
+        }
+      ],
+      "notes": [],
+      "body": [
+        {
+          "kind": "line",
+          "content": [
+            {
+              "math": "s_t\\leftarrow s,\\quad u\\sim\\operatorname{Uniform}(0,1)"
+            }
+          ]
+        },
+        {
+          "kind": "equation",
+          "math": "a_t\\leftarrow\\begin{cases}a,\\ a\\sim\\operatorname{Uniform}(\\mathcal A),&u<\\varepsilon,\\\\ \\arg\\max_{a\\in\\mathcal A}Q_\\theta(s_t,a),&u\\ge\\varepsilon.\\end{cases}"
+        },
+        {
+          "kind": "line",
+          "content": [
+            {
+              "math": "(r_t,s'_t,d_t,\\xi_t)\\leftarrow\\operatorname{Step}(\\mathcal E,a_t)"
+            }
+          ]
+        },
+        {
+          "kind": "line",
+          "content": [
+            {
+              "math": "\\mathcal R\\leftarrow\\operatorname{Append}_N(\\mathcal R,(s_t,a_t,r_t,s'_t,d_t))"
+            }
+          ],
+          "note": "Store the transition's final next observation before resetting. Append keeps the most recent N transitions. Only true termination disables bootstrap."
+        },
+        {
+          "kind": "line",
+          "content": [
+            {
+              "math": "s\\leftarrow s'_t"
+            }
+          ]
+        },
+        {
+          "kind": "block",
+          "header": [
+            {
+              "keyword": "if "
+            },
+            {
+              "math": "d_t\\lor\\xi_t"
+            },
+            {
+              "keyword": " then"
+            }
+          ],
+          "body": [
+            {
+              "kind": "line",
+              "content": [
+                {
+                  "math": "s\\leftarrow\\operatorname{Reset}(\\mathcal E)"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "dqn-update",
+      "number": 7,
+      "title": "DQN Replay Update",
+      "input": [
+        {
+          "math": "\\theta,\\theta^-,\\mathcal R,\\mathcal A,M,\\gamma,\\alpha"
+        }
+      ],
+      "output": [
+        {
+          "math": "\\theta"
+        }
+      ],
+      "notes": [],
+      "body": [
+        {
+          "kind": "line",
+          "content": [
+            {
+              "math": "\\mathcal B=\\{(s_i,a_i,r_i,s'_i,d_i)\\}_{i=1}^{M}\\sim\\operatorname{Sample}(\\mathcal R,M)"
+            }
+          ]
+        },
+        {
+          "kind": "equation",
+          "math": "y_i\\leftarrow r_i+\\gamma(1-d_i)\\max_{a'\\in\\mathcal A}Q_{\\theta^-}(s'_i,a')"
+        },
+        {
+          "kind": "equation",
+          "math": "\\mathcal L(\\theta)=\\frac{1}{2M}\\sum_{i=1}^{M}\\bigl(Q_\\theta(s_i,a_i)-y_i\\bigr)^2",
+          "note": "Sample transitions uniformly from replay. Treat y as a fixed target when differentiating the online network; this is standard DQN, without Double DQN or prioritized replay."
+        },
+        {
+          "kind": "line",
+          "content": [
+            {
+              "math": "\\theta\\leftarrow\\theta-\\alpha\\nabla_\\theta\\mathcal L(\\theta)"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "symbols": [
+    {
+      "id": "theta-initial",
+      "tex": "\\theta_0",
+      "description": "Initial trainable network parameters."
+    },
+    {
+      "id": "theta-final",
+      "tex": "\\theta_K",
+      "description": "Actor parameters after K training iterations."
+    },
+    {
+      "id": "theta-iteration",
+      "tex": "\\theta_k",
+      "description": "Actor parameters at the end of iteration k."
+    },
+    {
+      "id": "theta",
+      "tex": "\\theta",
+      "description": "Trainable actor or online Q-network parameters."
+    },
+    {
+      "id": "w-initial",
+      "tex": "w_0",
+      "description": "Initial critic parameter vector."
+    },
+    {
+      "id": "w",
+      "tex": "w",
+      "description": "Critic parameter vector defining the value function."
+    },
+    {
+      "id": "epochs",
+      "tex": "\\widetilde K",
+      "description": "Number of optimization epochs per collected rollout."
+    },
+    {
+      "id": "iterations",
+      "tex": "K",
+      "description": "Total number of training iterations."
+    },
+    {
+      "id": "batch-size",
+      "tex": "M",
+      "description": "Maximum number of samples in each minibatch."
+    },
+    {
+      "id": "environments",
+      "tex": "\\mathcal E_e",
+      "description": "Environment e."
+    },
+    {
+      "id": "environment-count",
+      "tex": "N_e",
+      "description": "Number of environments."
+    },
+    {
+      "id": "horizon",
+      "tex": "T",
+      "description": "Number of interaction steps collected per environment."
+    },
+    {
+      "id": "discount",
+      "tex": "\\gamma",
+      "description": "Discount factor for future rewards."
+    },
+    {
+      "id": "trace",
+      "tex": "\\lambda",
+      "description": "GAE trace parameter controlling the bias–variance tradeoff."
+    },
+    {
+      "id": "clip",
+      "tex": "\\epsilon",
+      "description": "PPO probability-ratio clipping parameter."
+    },
+    {
+      "id": "value-weight",
+      "tex": "c_1",
+      "description": "Coefficient of the value-function loss."
+    },
+    {
+      "id": "entropy-weight",
+      "tex": "c_2",
+      "description": "Coefficient of the policy entropy bonus."
+    },
+    {
+      "id": "learning-rate",
+      "tex": "\\alpha",
+      "description": "Learning rate for the parameter update."
+    },
+    {
+      "id": "policy",
+      "tex": "\\pi",
+      "description": "Policy: the conditional probability distribution over actions."
+    },
+    {
+      "id": "value",
+      "tex": "V_w",
+      "description": "Critic: the estimated discounted return from a state."
+    },
+    {
+      "id": "batch-collection",
+      "tex": "\\widetilde{\\mathcal D}",
+      "description": "Shuffled rollout partitioned into minibatches."
+    },
+    {
+      "id": "rollout-iteration",
+      "tex": "\\mathcal D_k",
+      "description": "On-policy rollout collected at training iteration k."
+    },
+    {
+      "id": "rollout-local",
+      "tex": "\\mathcal D_e",
+      "description": "Ordered transition buffer for environment e."
+    },
+    {
+      "id": "rollout",
+      "tex": "\\mathcal D",
+      "description": "Collected on-policy samples used for optimization."
+    },
+    {
+      "id": "minibatch",
+      "tex": "\\mathcal B",
+      "description": "Current minibatch of rollout or replay samples."
+    },
+    {
+      "id": "state-next",
+      "tex": "s'_t",
+      "description": "Final next observation from the transition, before any reset."
+    },
+    {
+      "id": "state",
+      "tex": "s",
+      "description": "Environment state or observation."
+    },
+    {
+      "id": "action",
+      "tex": "a",
+      "description": "Action sampled from the policy."
+    },
+    {
+      "id": "reward",
+      "tex": "r",
+      "description": "Reward returned by the environment."
+    },
+    {
+      "id": "value-next",
+      "tex": "v'_t",
+      "description": "Critic prediction at the final next observation."
+    },
+    {
+      "id": "value-estimate",
+      "tex": "v",
+      "description": "Critic prediction stored during data collection."
+    },
+    {
+      "id": "log-prob",
+      "tex": "\\rho",
+      "description": "Action log-probability under the policy that collected the rollout."
+    },
+    {
+      "id": "terminated",
+      "tex": "d_t^{\\mathrm{term}}",
+      "description": "True terminal-state indicator: 1 at an MDP termination."
+    },
+    {
+      "id": "truncated",
+      "tex": "d_t^{\\mathrm{trunc}}",
+      "description": "Artificial truncation indicator, such as a time limit."
+    },
+    {
+      "id": "bootstrap",
+      "tex": "b",
+      "description": "Bootstrap mask: zero at a true terminal state, one otherwise."
+    },
+    {
+      "id": "continuation",
+      "tex": "c",
+      "description": "Trace-continuation mask: zero at every episode boundary."
+    },
+    {
+      "id": "advantage",
+      "tex": "\\widehat A",
+      "description": "Estimated advantage: return relative to the critic's baseline."
+    },
+    {
+      "id": "return-target",
+      "tex": "\\widehat R",
+      "description": "Fixed return target used to train the critic."
+    },
+    {
+      "id": "td-residual",
+      "tex": "\\delta",
+      "description": "One-step temporal-difference residual."
+    },
+    {
+      "id": "ratio",
+      "tex": "q",
+      "description": "Ratio of current action probability to rollout-time action probability."
+    },
+    {
+      "id": "policy-loss",
+      "tex": "L_i^{\\mathrm{clip}}",
+      "description": "Clipped PPO surrogate for sample i."
+    },
+    {
+      "id": "value-loss",
+      "tex": "L_i^{\\mathrm{vf}}",
+      "description": "Squared value-prediction loss for sample i."
+    },
+    {
+      "id": "objective",
+      "tex": "\\widehat L",
+      "description": "Joint objective maximized by actor and critic updates."
+    },
+    {
+      "id": "entropy",
+      "tex": "H",
+      "description": "Entropy of the policy's action distribution."
+    },
+    {
+      "id": "step-index",
+      "tex": "t",
+      "description": "Interaction timestep within one environment rollout."
+    },
+    {
+      "id": "sample-index",
+      "tex": "i",
+      "description": "Sample index within the current minibatch."
+    },
+    {
+      "id": "iteration-index",
+      "tex": "k",
+      "description": "Training iteration index."
+    },
+    {
+      "id": "epoch-index",
+      "tex": "j",
+      "description": "Optimization epoch index."
+    },
+    {
+      "id": "environment-index",
+      "tex": "e",
+      "description": "Environment index."
+    },
+    {
+      "id": "target-parameters",
+      "tex": "\\theta^-",
+      "description": "Frozen target Q-network parameters."
+    },
+    {
+      "id": "q-network",
+      "tex": "Q",
+      "description": "Action-value network estimating discounted return for a state and action."
+    },
+    {
+      "id": "replay-memory",
+      "tex": "\\mathcal R",
+      "description": "Replay buffer storing transitions from previous interactions."
+    },
+    {
+      "id": "environment",
+      "tex": "\\mathcal E",
+      "description": "Environment used for interaction."
+    },
+    {
+      "id": "action-space",
+      "tex": "\\mathcal A",
+      "description": "Finite set of available actions."
+    },
+    {
+      "id": "replay-capacity",
+      "tex": "N",
+      "description": "Maximum number of transitions retained in replay memory."
+    },
+    {
+      "id": "target-period",
+      "tex": "C",
+      "description": "Number of environment steps between target-network copies."
+    },
+    {
+      "id": "exploration",
+      "tex": "\\varepsilon",
+      "description": "Probability of selecting a uniformly random action."
+    },
+    {
+      "id": "random-draw",
+      "tex": "u",
+      "description": "Uniform random draw used for epsilon-greedy action selection."
+    },
+    {
+      "id": "dqn-termination",
+      "tex": "d",
+      "description": "True terminal-state indicator; artificial time limits do not count as termination."
+    },
+    {
+      "id": "dqn-truncation",
+      "tex": "\\xi",
+      "description": "Artificial truncation indicator, such as an environment time limit."
+    },
+    {
+      "id": "bellman-target",
+      "tex": "y",
+      "description": "One-step Bellman target computed using the frozen target network."
+    },
+    {
+      "id": "dqn-loss",
+      "tex": "\\mathcal L",
+      "description": "Mean squared Bellman error minimized by the online Q-network."
+    }
+  ]
+}

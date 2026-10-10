@@ -1,0 +1,11 @@
+{
+  "name": "magiclab-development",
+  "private": true,
+  "scripts": {
+    "start": "npm --prefix magic_lab start -- --examples",
+    "check": "npm --prefix magic_lab run check",
+    "test": "node --test tests/*.test.mjs",
+    "check:data": "npm --prefix magic_lab run check:data -- magic_lab/examples/magicplot",
+    "examples:generate": "npm --prefix magic_lab run examples:generate"
+  }
+}

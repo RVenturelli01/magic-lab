@@ -1,0 +1,425 @@
+/* The application frame keeps workstation tokens; the reading surface is a document. */
+.lab-main:has([data-algo-root]) {
+  max-width: none;
+}
+.algorithm-reader {
+  min-width: 0;
+  width: 100%;
+  margin: 0 auto;
+}
+.algorithm-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 12px minmax(
+      240px,
+      var(--algorithm-graph-width, 34%)
+    );
+  gap: 8px;
+  align-items: start;
+}
+.algorithm-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin: 0;
+}
+.algorithm-tab-pending {
+  opacity: 0.55;
+  cursor: default;
+}
+.algorithm-divider {
+  align-self: stretch;
+  min-height: 240px;
+  cursor: col-resize;
+  touch-action: none;
+  border-inline: 1px solid var(--border);
+}
+.algorithm-divider:hover,
+.algorithm-divider:focus-visible {
+  background: var(--control);
+  outline: 2px solid var(--focus);
+}
+#algorithm-graph-panel {
+  min-width: 0;
+}
+@media (max-width: 900px) {
+  .algorithm-layout {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  .algorithm-divider {
+    display: none;
+  }
+}
+.algorithm-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.algorithm-toolbar nav {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.algorithm-paper {
+  background: #fff;
+  color: #182126;
+  padding: 24px 28px;
+  border: 1px solid var(--border);
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 19px;
+  line-height: 1.65;
+}
+.algorithm-caption {
+  border-top: 2px solid #182126;
+  border-bottom: 1px solid #182126;
+  padding: 8px 12px;
+  margin-bottom: 12px;
+}
+.algorithm-caption h2 {
+  font-family: inherit;
+  font-size: 24px;
+  font-weight: normal;
+}
+.algorithm-input,
+.algorithm-output {
+  display: grid;
+  grid-template-columns: 72px minmax(0, 1fr);
+  gap: 12px;
+  padding: 0 12px;
+}
+.algorithm-input {
+  margin-bottom: 16px;
+}
+.algorithm-output {
+  border-bottom: 2px solid #182126;
+  padding-top: 12px;
+  padding-bottom: 8px;
+}
+.algorithm-row {
+  display: flex;
+  align-items: baseline;
+  min-width: 0;
+}
+.algorithm-number {
+  width: 32px;
+  flex: 0 0 32px;
+  font-size: 13px;
+  text-align: right;
+  padding-right: 12px;
+  color: #546269;
+  font-variant-numeric: tabular-nums;
+}
+.algorithm-guides {
+  display: flex;
+  flex: 0 0 auto;
+  align-self: stretch;
+}
+.algorithm-guides i {
+  display: block;
+  width: 24px;
+  border-left: 1px solid #a5aeb2;
+}
+.algorithm-content {
+  min-width: 0;
+  flex: 1;
+  padding: 4px 0;
+  overflow-wrap: anywhere;
+}
+.algorithm-comment .algorithm-content {
+  color: #465d68;
+  font-style: italic;
+  font-size: 17px;
+  padding-top: 12px;
+}
+.algorithm-equation .algorithm-content {
+  overflow: visible;
+  padding: 4px 0;
+}
+.algorithm-paper .katex {
+  font-size: 1em;
+}
+.algorithm-paper .katex-display {
+  margin: 0;
+}
+.algorithm-paper .katex-display > .katex {
+  text-align: left;
+  padding: 0;
+  white-space: normal;
+}
+.algorithm-paper .katex-html {
+  white-space: normal;
+}
+.algorithm-paper .algorithm-call {
+  display: inline;
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+  color: #006b70;
+  background: transparent;
+  border: 0;
+  border-bottom: 1px dashed #006b70;
+  padding: 1px 4px;
+  min-height: 0;
+  max-width: 100%;
+  text-align: left;
+  white-space: normal;
+}
+.algorithm-paper .algorithm-call:hover {
+  background: #e1f0f0;
+  border-bottom-style: solid;
+}
+.algorithm-paper .algorithm-call:focus-visible {
+  outline-color: #006b70;
+}
+.algorithm-call-hint {
+  font-size: 14px;
+}
+.algorithm-notes {
+  margin-top: 16px;
+}
+.algorithm-notes summary {
+  min-height: 44px;
+  padding: 8px;
+}
+.algorithm-notes li {
+  margin: 8px 0;
+}
+[data-algo-symbol] {
+  cursor: help;
+}
+.algorithm-paper [data-algo-symbol]:hover {
+  background: #e3f2f2;
+}
+.algorithm-paper [data-algo-symbol]:focus-visible {
+  outline: 2px solid #006b70;
+  outline-offset: 2px;
+}
+.algorithm-paper .algorithm-step-help {
+  display: inline-grid;
+  place-items: center;
+  vertical-align: middle;
+  width: 24px;
+  height: 24px;
+  min-height: 24px;
+  padding: 0;
+  margin-left: 12px;
+  flex: 0 0 auto;
+  align-self: center;
+  border: 1px solid #61777d;
+  background: #f5f8f8;
+  color: #36565e;
+  font:
+    14px/1 ui-monospace,
+    Consolas,
+    monospace;
+}
+.algorithm-paper .algorithm-step-help:hover {
+  background: #e3f2f2;
+}
+.algorithm-paper .algorithm-step-help:focus-visible {
+  outline-color: #006b70;
+}
+.algorithm-help-tooltip {
+  position: fixed;
+  z-index: 100;
+  max-width: min(340px, calc(100vw - 16px));
+  padding: 12px;
+  border: 1px solid var(--border);
+  background: var(--panel);
+  color: var(--text);
+  font:
+    14px/1.5 ui-monospace,
+    Consolas,
+    monospace;
+}
+.algorithm-help-tooltip[hidden] {
+  display: none;
+}
+@media (pointer: coarse) {
+  .algorithm-paper .algorithm-step-help {
+    width: 44px;
+    height: 44px;
+    min-height: 44px;
+  }
+}
+.algorithm-graph {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  padding: 16px;
+  height: 100%;
+}
+.algorithm-graph h3 {
+  margin: 0;
+  font-size: 14px;
+}
+.algorithm-graph-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+.algorithm-graph-controls {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.algorithm-graph-controls button {
+  min-width: 36px;
+  padding: 4px 8px;
+}
+.algorithm-graph-controls output {
+  min-width: 48px;
+  text-align: center;
+  font-size: 12px;
+  color: var(--muted);
+}
+.algorithm-graph-viewport {
+  position: relative;
+  height: clamp(360px, 58vh, 600px);
+  overflow: hidden;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  touch-action: none;
+  cursor: grab;
+}
+.algorithm-graph-viewport:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+.algorithm-graph-viewport.is-panning {
+  cursor: grabbing;
+  user-select: none;
+}
+.algorithm-graph-viewport.is-panning button {
+  cursor: grabbing;
+}
+.algorithm-graph-canvas {
+  position: absolute;
+  left: 0;
+  top: 0;
+  transform-origin: 0 0;
+}
+.algorithm-graph-canvas svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+.algorithm-graph-canvas marker path {
+  fill: var(--muted);
+}
+.module-edge {
+  stroke: var(--muted);
+  stroke-width: 1.5;
+  vector-effect: non-scaling-stroke;
+  fill: none;
+}
+.module-edge-active {
+  stroke: var(--focus);
+}
+.module-node {
+  position: absolute;
+  height: 72px;
+  width: 220px;
+  transform: translateX(-50%);
+}
+.module-node-open {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  align-content: center;
+  padding: 8px;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+.module-node strong {
+  font-size: 13px;
+  line-height: 1.4;
+}
+.algorithm-shared-help {
+  display: inline-grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  min-height: 24px;
+  padding: 0;
+  margin-left: 8px;
+  font:
+    14px/1 ui-monospace,
+    Consolas,
+    monospace;
+}
+.graph-shared-help {
+  position: absolute;
+  right: -8px;
+  top: -8px;
+  margin: 0;
+}
+@media (pointer: coarse) {
+  .algorithm-shared-help {
+    width: 44px;
+    height: 44px;
+    min-height: 44px;
+  }
+}
+.algorithm-graph-links {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+.algorithm-input > div,
+.algorithm-output > div {
+  min-width: 0;
+  overflow: visible;
+  height: auto;
+}
+@media (max-width: 640px) {
+  .algorithm-paper {
+    padding: 16px 8px;
+    font-size: 17px;
+  }
+  .algorithm-caption {
+    padding: 8px;
+  }
+  .algorithm-input,
+  .algorithm-output {
+    grid-template-columns: 1fr;
+    gap: 4px;
+    padding-inline: 8px;
+  }
+  .algorithm-guides i {
+    width: 12px;
+  }
+  .algorithm-number {
+    width: 24px;
+    flex-basis: 24px;
+    padding-right: 8px;
+  }
+  .algorithm-comment .algorithm-content {
+    font-size: 15px;
+  }
+  .algorithm-paper .algorithm-call {
+    display: inline-block;
+    min-height: 44px;
+    padding-top: 8px;
+  }
+}
+@media (pointer: coarse) {
+  .algorithm-paper .algorithm-call {
+    display: inline-block;
+    min-height: 44px;
+    padding-top: 8px;
+  }
+}

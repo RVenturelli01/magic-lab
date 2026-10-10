@@ -1,0 +1,43 @@
+{
+  "id": "legacy-example-v1",
+  "stepColumn": "timesteps",
+  "columns": {
+    "eval_reward": "eval/return",
+    "train_reward": "train/return"
+  },
+  "runs": [
+    {
+      "id": "legacy-ppo-0",
+      "algorithm": "PPO",
+      "environment": "CartPole-v1",
+      "seed": 0,
+      "status": "completed",
+      "config": {
+        "learning_rate": 0.0003
+      },
+      "code": {
+        "commit": "example-commit",
+        "dirty": false
+      },
+      "file": "progress.csv"
+    }
+  ],
+  "metrics": [
+    {
+      "id": "eval/return",
+      "label": "Episode return",
+      "phase": "evaluation",
+      "unit": "reward",
+      "xUnit": "environment steps",
+      "direction": "higher"
+    },
+    {
+      "id": "train/return",
+      "label": "Episode return",
+      "phase": "training",
+      "unit": "reward",
+      "xUnit": "environment steps",
+      "direction": "higher"
+    }
+  ]
+}
