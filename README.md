@@ -1,140 +1,94 @@
-﻿# MagicLab
+# MagicLab
 
-**Ask. See. Understand.**
+**Build your own research dashboard, one project at a time.**
 
-Research with a coding agent and a visual workspace side by side.
+Install MagicLab inside your repository and adapt it to your data, preferences, and workflow. Start with a working interface, shared components and styles, and instructions that guide your coding agent through each change.
 
-Split your screen: keep your **coding agent on one side** and the **MagicLab
-dashboard on the other**. Give the agent your questions, instructions, and ideas.
-Use the dashboard to visualize results, compare experiments, and understand
-how your algorithms are implemented.
+Each project gets its own copy. You decide what it becomes.
 
+![MagicLab workspace with grouped runs and learning curves](dashboard/docs/media/magicplot.png)
 
-https://github.com/user-attachments/assets/d28f213b-b0db-402e-bd39-d7fabd0a7037
+_An example starting layout with synthetic data._
 
+[Watch the 53-second demo](dashboard/docs/media/magiclab-demo.webm) — filter runs, edit a chart, compare algorithms, and explore studies and datasets. Recorded with synthetic data; no audio.
 
-Want to change anything? **JUST ASK your coding agent.** A different analysis,
-a clearer explanation, a new view, a feature, or a different style: describe
-what you need, then explore it in the dashboard.
+## Try it
 
-## Your starting tools
+With **Node.js 24**, npm, and Git installed:
 
-MagicLab gives you a set of starting tools to adapt with your coding agent.
-Explore experiment results with MagicPlot, read algorithm descriptions with
-MagicAlgo, and extend the workspace as your research needs evolve.
+```sh
+git clone https://github.com/RVenturelli01/magic-lab.git
+cd magic-lab/dashboard
+npm ci
+npm run dev -- --host 127.0.0.1
+```
 
-![MagicLab home with MagicPlot available, MagicAlgo in prototype, and MagicTuner planned](magic_lab/docs/design/reference/magiclab-home-dark.png)
+Open **http://127.0.0.1:5173**. No account or API key is needed for the demo. Stop it with **Ctrl+C**.
 
-### MagicPlot — explore your results
+## Examples included
 
-Which experiment performed best? Did a change help across seeds? Which settings
-made the difference?
+MagicPlot, MagicAlgo, MagicTuner, and MagicData provide working examples for charts, algorithm documents, tuning studies, and datasets. Reuse and adapt what fits your project. The bundled data is synthetic; the app does not launch training or tuning jobs.
 
-Bring your local experiment results together and choose the runs you care about.
+<details>
+<summary>See more dashboard screenshots</summary>
 
-- **Filter and select runs** by configuration and metadata, then use the same
-  selection across charts, ablations, and tables.
-- **Compare learning curves** across experiments and seeds, with smoothing and
-  configurable uncertainty bands.
-- **Explore ablations** in a grid of plots with shared scales to see how settings
-  affect your results.
-- **Summarize results in tables** with means, standard deviations, and seed counts.
-- **Style your figures** with custom labels, colors, legends, dimensions, and axis
-  ranges; save views to revisit your analysis.
-- **Export for papers and presentations** as SVG, PNG, PDF, CSV, or standalone
-  LaTeX. Preview compiled LaTeX with a local installation of `pdflatex`.
+**Algorithm comparison**
 
-![MagicPlot comparing episode return, fingertip-target distance and PPO clip fraction with uncertainty bands](magic_lab/docs/design/reference/magicplot-overview-dark.png)
+![Algorithm versions compared side by side](dashboard/docs/media/magicalgo.png)
 
-_Example: compare learning curves and see how much results vary._
+**Tuning study**
 
-### MagicAlgo — explore the ideas behind your code
+![Simulated tuning study and trial history](dashboard/docs/media/magictuner.png)
 
-How does your algorithm work? What happens inside each step? How do the pieces
-connect?
+**Dataset inspection**
 
-Read a mathematical description alongside an interactive map.
+![Sample dataset with column statistics and row preview](dashboard/docs/media/magicdata.png)
 
-- **Read mathematical pseudocode** with typeset formulas, symbolic inputs and
-  outputs, numbered steps, and nested loops.
-- **Follow module calls** from the main algorithm into detailed substeps, then
-  return through the breadcrumbs.
-- **Explore the module graph** to see how the pieces connect, with pan, zoom,
-  and a highlight for the module you are reading.
-- **Look up symbols and step notes** through contextual explanations beside
-  the document.
-- **Switch between algorithm descriptions** and resize the document and graph
-  panes to suit your reading workflow.
-
-![MagicAlgo showing a mathematical description of PPO beside an interactive module graph](magic_lab/docs/design/reference/magicalgo-overview-dark.png)
-
-_Example: follow PPO from the big picture into data collection and optimization._
-
-### MagicTuner — planned parameter tuning
-
-MagicTuner is a placeholder for a future workspace to explore parameter choices
-with a coding agent. A tuning workflow is not implemented yet. Today, use
-MagicPlot to compare the results of experiments you have already run.
+</details>
 
 ## Make it yours
 
-1. **Download this repository** and copy the [`magic_lab`](magic_lab/README.md)
-   folder into your own project.
-2. **Open your coding agent** in your project and ask it to adapt MagicLab to
-   your experiments and algorithms. Resolve any questions about your data together.
-3. **Open the dashboard beside your coding agent** using the startup instructions
-   your agent provides. Keep both visible as you ask questions and inspect results.
-
-Start with this request:
-
-> Adapt MagicLab to this project. Read its agent instructions and adaptation
-> guide, connect my existing experiment results, and prepare interactive
-> mathematical descriptions of my algorithms. Use the bundled examples as the
-> starting style. Check the data and descriptions against my project, keep my
-> original logs intact, and show me how to open the dashboard.
-
-## JUST ASK
-
-Once it is connected, every change starts with a request to your coding agent.
-Use what you see in the dashboard to tell it what you need next:
-
-- “Compare these experiments across seeds.”
-- “Add a view that shows the effect of the learning rate.”
-- “Prepare this figure for a two-column paper.”
-- “Show me how this algorithm's update step works.”
-- “Change the dashboard's style to match my preferences.”
-- “Build my own Weights & Biases-style workspace with MagicLab: connect my local
-  experiment logs, add the metrics and comparisons I care about, and let me save
-  views and export figures for my papers.”
-
-Ask the agent to make the change, reload the dashboard, and inspect the result.
-Repeat as your questions evolve. MagicLab is a starting workspace you can shape
-through conversation with your coding agent.
-
-## Try it first
-
-The bundled examples let you explore MagicPlot and MagicAlgo before connecting
-your own project. They also give your agent a visual starting point to follow
-or change at your request.
-
-With [Node.js](https://nodejs.org/) 22 or newer installed, run these commands
-from this repository's folder:
+From the MagicLab checkout root, copy it into a **new directory** in your existing research repository:
 
 ```sh
-npm --prefix magic_lab ci
-npm start
+node dashboard/scripts/install-into.mjs /path/to/your-project/dashboard
 ```
 
-Then open [MagicLab in your browser](http://127.0.0.1:4173).
+The installer includes the source, styles, agent instructions, and verification tools. It refuses to overwrite an existing directory. Run `npm ci` and `npm run dev -- --host 127.0.0.1` inside the new copy. See the [installation guide](dashboard/docs/ADOPTION.md) for details.
 
-The examples use synthetic experiment results and illustrative PPO/DQN
-descriptions. In your own project, your agent connects your actual data;
-examples are only loaded when explicitly selected.
+Open your coding agent in that directory and give it a task:
 
-MagicLab runs locally, with no account required.
+```text
+Read AGENTS.md and follow its rules and change workflow.
+Adapt the dashboard for [my project], using [my data].
+Add [feature] with [my preferences], then test it and visually review screenshots.
+```
 
-Ready to connect your project? Share the [adaptation guide](magic_lab/docs/ADAPTATION.md)
-with your agent. For setup and development details, see the
-[module guide](magic_lab/README.md).
+For example: “Add a view comparing validation loss across model sizes, grouped by dataset.” To connect experiment logs, use the included [data adapter guide](dashboard/docs/DATA_ADAPTER.md).
 
-Released under the [MIT license](magic_lab/LICENSE).
+## Guidelines for your coding agent
+
+The agent must read [AGENTS.md](dashboard/AGENTS.md) before changing the dashboard and follow these rules:
+
+- **Minimum added entropy.** Reuse existing code, components, styles, and patterns first. Add only what the requested feature needs. New controls, dependencies, abstractions, or visual differences require a concrete reason.
+- **Use the existing structure.** Find the closest implementation in the [architecture map](dashboard/docs/ARCHITECTURE.md) and follow the [style guide](dashboard/docs/STYLE_GUIDE.md).
+- **Preserve existing work and data.** Keep changes focused, preserve saved state, and follow the [data adapter contract](dashboard/docs/DATA_ADAPTER.md) when connecting experiments. Keep synthetic data clearly labeled.
+- **Verify before reporting completion.** Run the relevant checks, inspect actual screenshots, fix issues, and report anything still unverified.
+
+The [required workflow](dashboard/docs/CHANGE_WORKFLOW.md) is:
+
+**Define success → find what to reuse → implement → test → inspect screenshots → refine.**
+
+From the dashboard directory, with the dev server running:
+
+```sh
+npm run check
+npm run visual:install
+npm run visual:check
+```
+
+`check` runs tests, TypeScript, and lint. `visual:install` downloads Chromium once; skip it if Chrome is available. The [browser script](dashboard/scripts/visual-check.mjs) saves desktop/mobile screenshots and an error report in `outputs/visual-check/`.
+
+The agent must extend checks for new features and **open the screenshots**, compare with existing views, and repeat after fixes. A passing script is not visual approval. Follow the [visual review guide](dashboard/docs/VISUAL_VERIFICATION.md).
+
+[Dashboard guide](dashboard/README.md) · [MIT License](LICENSE)

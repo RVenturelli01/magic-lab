@@ -1,0 +1,626 @@
+{
+  "source": "rea-agents MCP tools/list",
+  "reaVersion": "6.8.0",
+  "scope": "Tools useful for dashboard visual verification and focused browser debugging",
+  "tools": [
+    {
+      "name": "list_browser_targets",
+      "mcpName": "mcp__rea__list_browser_targets",
+      "when": "Find the exact dashboard tab on a loopback Chrome CDP endpoint.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "cdp_endpoint": {
+            "type": "string",
+            "minLength": 1
+          },
+          "allowed_origins": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        "required": [
+          "cdp_endpoint"
+        ],
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "inspect_web_page",
+      "mcpName": "mcp__rea__inspect_web_page",
+      "when": "Read DOM, accessibility, resources, and console metadata without changing the page.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "cdp_endpoint": {
+            "type": "string",
+            "minLength": 1
+          },
+          "allowed_origins": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "target_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "command_timeout_ms": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 2147483647
+          },
+          "observation_ms": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "include_accessibility_text": {
+            "type": "boolean"
+          },
+          "include_console_text": {
+            "type": "boolean"
+          },
+          "include_json_body_shapes": {
+            "type": "boolean"
+          },
+          "include_websocket_shapes": {
+            "type": "boolean"
+          },
+          "include_storage_keys": {
+            "type": "boolean"
+          },
+          "include_storage_fingerprints": {
+            "type": "boolean"
+          },
+          "include_script_sources": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "cdp_endpoint",
+          "target_id"
+        ],
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "description": "Provide a complete input group: cdp_endpoint + target_id + [allowed_origins] + [command_timeout_ms] + [observation_ms] + [include_accessibility_text] + [include_console_text] + [include_json_body_shapes] + [include_websocket_shapes] + [include_storage_keys] + [include_storage_fingerprints] + [include_script_sources]; cdp_endpoint + target_id + include_script_sources + [allowed_origins] + [command_timeout_ms] + [observation_ms] + [include_accessibility_text] + [include_console_text] + [include_json_body_shapes] + [include_websocket_shapes] + [include_storage_keys] + [include_storage_fingerprints].",
+        "minProperties": 2,
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "capture_web_screenshot",
+      "mcpName": "mcp__rea__capture_web_screenshot",
+      "when": "Capture the current viewport of an already selected Chrome tab.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "cdp_endpoint": {
+            "type": "string",
+            "minLength": 1
+          },
+          "allowed_origins": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "target_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "command_timeout_ms": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 2147483647
+          }
+        },
+        "required": [
+          "cdp_endpoint",
+          "target_id"
+        ],
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "capture_browser_scenario",
+      "mcpName": "mcp__rea__capture_browser_scenario",
+      "when": "Navigate and click through a repeatable browser scenario with screenshots and state checks.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "browser": {
+            "type": "object",
+            "description": "Required launch/connect selection. Launch uses the selected executable and an owned temporary profile; connect uses one loopback CDP endpoint and target."
+          },
+          "start_url": {
+            "type": "object",
+            "description": "Required initial HTTP(S) URL. Query values must be declared separately as public literals or secret references."
+          },
+          "environment": {
+            "type": "object",
+            "description": "Optional deterministic browser settings. Defaults to 1280x720, en-US, UTC, light mode, reduced motion, and blocked service workers."
+          },
+          "actions": {
+            "type": "array",
+            "items": {
+              "type": [
+                "null",
+                "boolean",
+                "object",
+                "array",
+                "number",
+                "string"
+              ],
+              "items": {}
+            },
+            "description": "Required sequence of explicit browser actions."
+          },
+          "storage": {
+            "type": "object",
+            "description": "Optional initial cookies, local storage, or session storage. Defaults to empty; every supplied value and origin must be declared and within the allowed origins."
+          },
+          "secrets": {
+            "type": "array",
+            "items": {
+              "type": [
+                "null",
+                "boolean",
+                "object",
+                "array",
+                "number",
+                "string"
+              ],
+              "items": {}
+            },
+            "description": "Optional environment-variable references for values used in actions, URLs, storage, or replay, and for redacting matching observed text. Secret values are never supplied inline."
+          },
+          "capture": {
+            "type": "object",
+            "description": "Optional retained artifacts and event families. Defaults to only a final sanitized URL; request screenshots, DOM, accessibility, history, storage, and event capture explicitly."
+          },
+          "command_timeout_ms": {
+            "type": "integer",
+            "description": "CDP WebSocket handshake and per-command response deadline in milliseconds (default 20000). Omitted means 20000 and applies on the next call. deadlineExpired for a handshake or command is not the caller observation window, not the 10000 ms CDP discovery response deadline, and not the 5000 ms cleanup grace. It also bounds passive script-source collection and the inspection/source-join phase that share this deadline. Does not raise the fixed protocol, retained-event, or source byte budgets. CDP discovery and cleanup grace have no runtime override."
+          }
+        },
+        "required": [
+          "browser",
+          "start_url",
+          "actions"
+        ],
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "description": "Advertised in reduced form by the compact input schema profile; the server still validates complete canonical inputs.",
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "observe_web_session",
+      "mcpName": "mcp__rea__observe_web_session",
+      "when": "Record a session while the user performs interactions in an existing browser.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "cdp_endpoint": {
+            "type": "string",
+            "minLength": 1
+          },
+          "allowed_origins": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "target_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "observation_ms": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "command_timeout_ms": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 2147483647
+          }
+        },
+        "required": [
+          "cdp_endpoint",
+          "target_id"
+        ],
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "compare_web_screenshots",
+      "mcpName": "mcp__rea__compare_web_screenshots",
+      "when": "Compare two captured screenshots when checking a visual change.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "before": {
+            "type": "object",
+            "properties": {
+              "sha256": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              "bytes": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 9007199254740991
+              },
+              "media_type": {
+                "type": "string",
+                "const": "image/png"
+              },
+              "data_base64": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "sha256",
+              "bytes",
+              "media_type",
+              "data_base64"
+            ]
+          },
+          "after": {
+            "type": "object",
+            "properties": {
+              "sha256": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              "bytes": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 9007199254740991
+              },
+              "media_type": {
+                "type": "string",
+                "const": "image/png"
+              },
+              "data_base64": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "sha256",
+              "bytes",
+              "media_type",
+              "data_base64"
+            ]
+          },
+          "channel_threshold": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 255
+          }
+        },
+        "required": [
+          "before",
+          "after"
+        ],
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "compare_web_captures",
+      "mcpName": "mcp__rea__compare_web_captures",
+      "when": "Compare two passive captures or scenario results for state and behavior changes.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "before": {
+            "type": "object",
+            "description": "The earlier or left-hand observation to compare."
+          },
+          "after": {
+            "type": "object",
+            "description": "The later or right-hand observation to compare."
+          },
+          "before_scenario": {
+            "type": "object",
+            "description": "Earlier complete normalized_result from capture_browser_scenario."
+          },
+          "after_scenario": {
+            "type": "object",
+            "description": "Later complete normalized_result from capture_browser_scenario."
+          },
+          "normalization": {
+            "type": "object",
+            "description": "Exact-literal rules committed in the comparison result."
+          }
+        },
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "description": "Provide a complete input group: before + after; before_scenario + after_scenario + [normalization]. Advertised in reduced form by the compact input schema profile; the server still validates complete canonical inputs.",
+        "minProperties": 2,
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "inspect_web_event_listeners",
+      "mcpName": "mcp__rea__inspect_web_event_listeners",
+      "when": "Locate handlers for a control that appears unresponsive.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "cdp_endpoint": {
+            "type": "string",
+            "minLength": 1
+          },
+          "allowed_origins": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "target_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "command_timeout_ms": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 2147483647
+          },
+          "selector": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "cdp_endpoint",
+          "target_id",
+          "selector"
+        ],
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "observe_web_execution",
+      "mcpName": "mcp__rea__observe_web_execution",
+      "when": "Measure execution coverage while reproducing a runtime problem.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "cdp_endpoint": {
+            "type": "string",
+            "minLength": 1
+          },
+          "allowed_origins": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "target_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "command_timeout_ms": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 2147483647
+          },
+          "observation_ms": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 2147483647
+          }
+        },
+        "required": [
+          "cdp_endpoint",
+          "target_id"
+        ],
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "inspect_web_network_capture",
+      "mcpName": "mcp__rea__inspect_web_network_capture",
+      "when": "Inspect a saved HAR or other supported network capture for data-loading problems.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "capture_path": {
+            "type": "string",
+            "description": "Absolute local HAR, mitmproxy, Fiddler SAZ or aioquic qlog capture path."
+          },
+          "format": {
+            "type": "string",
+            "description": "Declared input artifact format."
+          },
+          "record_ordinals": {
+            "type": "array",
+            "items": {
+              "type": [
+                "null",
+                "boolean",
+                "object",
+                "array",
+                "number",
+                "string"
+              ],
+              "items": {}
+            },
+            "description": "Zero-based producer record ordinals, in caller-selected order. Omit to inspect every record."
+          },
+          "protobuf": {
+            "type": "object"
+          },
+          "sensitive_values": {
+            "type": "array",
+            "items": {
+              "type": [
+                "null",
+                "boolean",
+                "object",
+                "array",
+                "number",
+                "string"
+              ],
+              "items": {}
+            },
+            "description": "Literal text excluded from capture payloads, byte/numeric projections, producer coordinates, artifact paths/digests and diagnostic text. Declaration strings are never persisted in Evidence parameters. Canonical contract keys, enums and provider identities remain intact."
+          },
+          "capture_timeout_ms": {
+            "type": "integer",
+            "description": "Capture wall-clock deadline in milliseconds (default 30000), from decoder start through process exit. Omitted means 30000 and applies on the next capture. deadlineExpired returns no partial capture. Does not raise the fixed 33554432-byte input budget, 100663296-byte reply budget, or 64-level nesting cap. Those have no runtime override."
+          },
+          "detail": {
+            "type": "string",
+            "description": "complete returns the complete analysis Evidence inline. summary retains that complete Evidence in this session and returns its inspect_analysis_view summary; inspect pages, items or facets through normalized_result.parent_evidence_id."
+          }
+        },
+        "required": [
+          "capture_path",
+          "format"
+        ],
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "description": "Advertised in reduced form by the compact input schema profile; the server still validates complete canonical inputs.",
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "inspect_analysis_view",
+      "mcpName": "mcp__rea__inspect_analysis_view",
+      "when": "Page through selected details of retained REA Evidence without rerunning a capture.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "source": {
+            "type": "object"
+          },
+          "view": {
+            "type": "object"
+          }
+        },
+        "required": [
+          "source",
+          "view"
+        ],
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "description": "Advertised in reduced form by the compact input schema profile; the server still validates complete canonical inputs.",
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "analyze_web_bundle",
+      "mcpName": "mcp__rea__analyze_web_bundle",
+      "when": "Inspect a shipped production web bundle when source code is unavailable.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "cdp_endpoint": {
+            "type": "string",
+            "description": "Literal loopback CDP endpoint: http://127.0.0.1:PORT, or ws://127.0.0.1:PORT/devtools/browser/ID."
+          },
+          "allowed_origins": {
+            "type": "array",
+            "items": {
+              "type": [
+                "null",
+                "boolean",
+                "object",
+                "array",
+                "number",
+                "string"
+              ],
+              "items": {}
+            }
+          },
+          "target_id": {
+            "type": "string",
+            "description": "Exact CDP target identifier selected from the endpoint's target listing."
+          },
+          "command_timeout_ms": {
+            "type": "integer",
+            "description": "CDP WebSocket handshake and per-command response deadline in milliseconds (default 20000). Omitted means 20000 and applies on the next call. deadlineExpired for a handshake or command is not the caller observation window, not the 10000 ms CDP discovery response deadline, and not the 5000 ms cleanup grace. It also bounds passive script-source collection and the inspection/source-join phase that share this deadline. Does not raise the fixed protocol, retained-event, or source byte budgets. CDP discovery and cleanup grace have no runtime override."
+          },
+          "observation_ms": {
+            "type": "integer"
+          },
+          "include_accessibility_text": {
+            "type": "boolean",
+            "description": "Whether to include accessibility text in the result."
+          },
+          "include_console_text": {
+            "type": "boolean",
+            "description": "Whether to include console text in the result."
+          },
+          "include_json_body_shapes": {
+            "type": "boolean",
+            "description": "Whether to include json body shapes in the result."
+          },
+          "include_websocket_shapes": {
+            "type": "boolean",
+            "description": "Whether to include websocket shapes in the result."
+          },
+          "include_storage_keys": {
+            "type": "boolean",
+            "description": "Whether to include storage keys in the result."
+          },
+          "include_storage_fingerprints": {
+            "type": "boolean",
+            "description": "Whether to include storage fingerprints in the result."
+          },
+          "include_script_sources": {
+            "type": "boolean",
+            "description": "Whether to include script sources in the result."
+          },
+          "fetch_source_maps": {
+            "type": "boolean"
+          },
+          "max_heap_mb": {
+            "type": "integer",
+            "description": "Heap phase: maximum V8 old-space for the isolated inert-script analyzer, in MiB (default 1024, range 128..16384). Omitted means 1024 and applies on the next call. This is not a total process RSS limit, not analysis_timeout_ms, and not total_analysis_timeout_ms. Bun ignores V8 flags; Windows Bun uses an owned process commit limit plus a 512 MiB runtime reserve, while other Bun hosts have no enforced memory limit. Raising max_heap_mb does not raise the fixed worker protocol or result byte budgets."
+          },
+          "analysis_timeout_ms": {
+            "type": "integer",
+            "description": "Per-script deadline phase: maximum startup, analysis and result transfer time for one captured script, in milliseconds (default 30000, range 1..2147483647). Omitted means 30000. deadlineExpired for one script is not total_analysis_timeout_ms. A per-script value above the effective total is rejected. Timed-out scripts are explicit unknowns and other scripts may still be analyzed. Applies on the next call."
+          },
+          "total_analysis_timeout_ms": {
+            "type": "integer",
+            "description": "Total analysis deadline phase: maximum time for all captured-script analysis, in milliseconds (default 300000, range 1..2147483647). Omitted means 300000. This is not the per-script analysis_timeout_ms, not capture, and not source-map fetch. A per-script timeout above this total is rejected. Unstarted scripts remain explicit unknowns. Applies on the next call."
+          },
+          "source_map_fetch_timeout_ms": {
+            "type": "integer",
+            "description": "Source-map fetch deadline in milliseconds (default 30000). Omitted means 30000 and applies on the next fetch. A fetch overrun is an item limitation (fetch_failed), not a thrown analysis timeout. Does not raise the fixed 64 MiB response budget or the source-map decode deadline. The response budget has no runtime override."
+          },
+          "detail": {
+            "type": "string"
+          },
+          "view": {
+            "type": "object"
+          }
+        },
+        "required": [
+          "cdp_endpoint",
+          "target_id"
+        ],
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "description": "Advertised in reduced form by the compact input schema profile; the server still validates complete canonical inputs.",
+        "minProperties": 2,
+        "additionalProperties": false
+      }
+    }
+  ]
+}

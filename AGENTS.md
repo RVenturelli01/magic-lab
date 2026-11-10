@@ -1,24 +1,7 @@
-# Repository boundaries
+# Coding-agent instructions
 
-`magic_lab/` is the portable dashboard module: application code, generic adapters,
-schemas, app tests, tooling, design documentation, screenshots and curated
-reference examples in `examples/magicplot/` and `examples/magicalgo/`.
-The user explicitly requested these bundled examples; they are an exception
-to the host-data boundary, not a destination for real experiments.
+MagicLab is a personal ML research dashboard intended to be installed inside other researchers' repositories and extended by coding agents. The primary rule is **minimum added entropy**: satisfy the user's request with the fewest new concepts, controls, branches, dependencies, and visual differences. Reuse existing structures, code, and styles first. Do not add speculative features or configuration. An explicit user requirement can justify a different approach; record the reason and keep the exception local.
 
-All real experiment code, training/evaluation, raw logs, normalized host data,
-configs, checkpoints, saved views and generated exports belong outside the module.
-Preserve raw source logs. No real training has been executed in this repository.
+Keep the same style and reuse the code if there is no reason to have it different. Apply this to every change and future implementation decision in this repository. Before adding a new visual pattern or implementation, find the closest existing one and extend the shared component, style, or utility when the behavior is common. Keep a difference only when the data, interaction, accessibility, or an explicit user requirement calls for it.
 
-In this development repository `npm start` selects the portable examples.
-In a new host, `npm --prefix magic_lab start` defaults to `data/dataset.json`
-and `data/algorithms.json` in that host. `OBSERVATORY_DATASET` and
-`MAGICLAB_ALGORITHMS` override them relative to the host root independently of cwd.
-`--examples` is an explicit opt-in; never silently fall back to synthetic data.
-
-Read `magic_lab/AGENTS.md`, `magic_lab/docs/DESIGN.md` and the relevant guide
-in `magic_lab/docs/design/` before changing the dashboard.
-
-Validation from root: `npm run check`, `npm --prefix magic_lab test`,
-`npm run check:data`, `node --test tests/*.test.mjs`, and
-`npm --prefix magic_lab run package:check`.
+The active application is in `dashboard/`. Read `dashboard/AGENTS.md` before changing it; that file routes agents to the architecture, style, and verification guides. Preserve the user's existing work and the current repository state while making focused changes.

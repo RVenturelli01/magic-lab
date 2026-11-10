@@ -1,5 +1,0 @@
-timesteps,eval_reward,train_reward
-0,20,18
-10000,90,75
-20000,200,180
-30000,475,420

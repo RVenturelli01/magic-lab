@@ -1,2 +1,10 @@
 __pycache__/
 *.py[cod]
+
+# Local scratch files and generated previews
+/tmp/
+/tmp-*.txt
+
+# Local credentials
+.env*
+*.pem
